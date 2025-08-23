@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 "use client"
 
 import type React from "react"
@@ -610,4 +611,8 @@ export default function ChatPage() {
       </div>
     </div>
   )
+=======
+export default function ChatbotPage() {
+  return <div>Chatbot Main Page</div>;
+>>>>>>> f6e23109532ce074fc3d46ae26217becbee5b6c3
 }
