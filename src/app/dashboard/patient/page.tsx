@@ -20,22 +20,23 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  Users,
-  Activity,
-  MapPin,
-  Clock,
-  AlertTriangle,
-  CheckCircle,
-  UserPlus,
-  Search,
-  X,
-  Filter,
-  ArrowRight,
+    Users,
+    Activity,
+    MapPin,
+    Clock,
+    AlertTriangle,
+    CheckCircle,
+    UserPlus,
+    Search,
+    X,
+    Filter,
+    ArrowRight,
 } from "lucide-react";
 import DonorMap from "@/components/Maps";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Link from "next/link";
+import axios from "axios";
 
 export default function PatientDashboard() {
   type Donor = {
@@ -88,6 +89,7 @@ export default function PatientDashboard() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
+  const [user, setUser] = useState<any>(null);
 
   const allRequests: RequestItem[] = [
     {
@@ -151,6 +153,27 @@ export default function PatientDashboard() {
 
     return matchesSearch && matchesStatus;
   });
+
+   useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        // Get token from localStorage (or cookies if you use cookies)
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        const res = await axios.get("http://localhost:8000/auth/me", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setUser(res.data);
+      } catch (err) {
+        console.error("Failed to fetch user:", err);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   const clearSearch = () => {
     setSearchQuery("");

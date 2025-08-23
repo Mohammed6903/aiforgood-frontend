@@ -38,7 +38,7 @@ export function Navbar() {
               Contact
             </Link>
             <ThemeToggle />
-            <Button>Get Started</Button>
+            <Link href="/auth/signin"><Button>Get Started</Button></Link> 
           </div>
 
           {/* Mobile menu button */}
