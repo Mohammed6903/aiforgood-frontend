@@ -237,7 +237,7 @@ export default function ChatPage() {
 
       if (data.mime_type === "text/plain") {
         setIsTyping(true)
-
+        // If no current message, start a new one for this turn
         if (currentMessageIdRef.current === null) {
           currentMessageIdRef.current = Math.random().toString(36).substring(7)
           const newMessage: Message = {
@@ -248,6 +248,7 @@ export default function ChatPage() {
           }
           setMessages((prev) => [...prev, newMessage])
         } else {
+          // Only append if turn is not completed
           setMessages((prev) =>
             prev.map((msg) =>
               msg.id === currentMessageIdRef.current ? { ...msg, content: msg.content + data.data } : msg,
@@ -329,6 +330,31 @@ export default function ChatPage() {
     { label: "Donor Coordination", action: "Help me coordinate with donors", icon: Bot },
   ]
 
+    // Send lat/long to WebSocket as text/plain
+    const sendLocation = () => {
+      if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) return;
+      if (!navigator.geolocation) {
+        alert("Geolocation is not supported by your browser.");
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const long = position.coords.longitude;
+          const message = {
+            mime_type: "text/plain",
+            data: `lat: ${lat}, long: ${long}`,
+          };
+          if (wsRef.current) {
+            wsRef.current.send(JSON.stringify(message));
+          }
+        },
+        (error) => {
+          alert("Unable to retrieve your location.");
+        }
+      );
+    };
+
   return (
     <>
       <Navbar />
@@ -400,9 +426,14 @@ export default function ChatPage() {
                           </Button>
                         </div>
                       )}
-                      <Button variant="outline" size="sm" className="hover:bg-accent/10 border-accent/30 bg-transparent">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="hover:bg-accent/10 border-accent/30 bg-transparent"
+                        onClick={sendLocation}
+                      >
                         <Phone className="h-4 w-4 mr-2 text-accent" />
-                        Emergency
+                        Send Location
                       </Button>
                     </div>
                   </div>

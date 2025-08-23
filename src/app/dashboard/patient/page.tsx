@@ -40,12 +40,24 @@ import axios from "axios";
 
 export default function PatientDashboard() {
   type Donor = {
-    id: number;
+    donor_id: number;
+    user_id: number;
     name: string;
-    blood: string;
-    availability: "Immediate" | "Soon" | "Busy";
-    lastDonation: string;
+    email: string;
+    phone: string;
+    city: string;
+    state: string;
+    country: string;
+    blood_type: string;
+    last_donation_date: string | null;
+    total_donations: number;
+    location_name: string;
+    distance_meters: number;
+    distance_km: number;
+    is_available: boolean;
+    days_since_last_donation: number | null;
   };
+
 
   type RequestItem = {
     id: string;
@@ -56,36 +68,23 @@ export default function PatientDashboard() {
     priority: "Searching Donors" | "Donor Matched" | "Completed";
   };
 
-  const [donors, setDonors] = useState<Donor[]>([
-    {
-      id: 1,
-      name: "Donor A",
-      blood: "A+",
-      availability: "Immediate",
-      lastDonation: "2025-07-15",
-    },
-    {
-      id: 2,
-      name: "Donor B",
-      blood: "O-",
-      availability: "Soon",
-      lastDonation: "2025-06-30",
-    },
-    {
-      id: 3,
-      name: "Donor C",
-      blood: "B+",
-      availability: "Busy",
-      lastDonation: "2025-08-01",
-    },
-    {
-      id: 4,
-      name: "Donor D",
-      blood: "AB+",
-      availability: "Immediate",
-      lastDonation: "2025-07-28",
-    },
-  ]);
+  const [donors, setDonors] = useState<Donor[]>([]);
+
+  useEffect(() => {
+    const fetchDonors = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+        const res = await axios.get("http://localhost:8000/nearby-donors", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setDonors(res.data);
+      } catch (err) {
+        console.error("Failed to fetch donors:", err);
+      }
+    };
+    fetchDonors();
+  }, []);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
@@ -297,7 +296,7 @@ export default function PatientDashboard() {
           <div className="space-y-4">
             {donors.map((d) => (
               <div
-                key={d.id}
+                key={d.donor_id}
                 className="flex justify-between items-center border border-gray-200 p-4 rounded-xl hover:shadow-md transition"
               >
                 {/* Donor Info */}
@@ -306,11 +305,17 @@ export default function PatientDashboard() {
                   <p className="text-sm text-gray-600">
                     Blood Group:{" "}
                     <span className="font-semibold text-red-500">
-                      {d.blood}
+                      {d.blood_type}
                     </span>
                   </p>
                   <p className="text-xs text-gray-500">
-                    Last Donation: {d.lastDonation}
+                    Last Donation: {d.last_donation_date ? d.last_donation_date : "N/A"}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    Location: {d.location_name}, {d.city}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    Distance: {d.distance_km.toFixed(2)} km
                   </p>
                 </div>
 
@@ -318,28 +323,24 @@ export default function PatientDashboard() {
                 <div>
                   <span
                     className={`px-3 py-1 rounded-full text-xs font-medium
-                  ${
-                    d.availability === "Immediate"
-                      ? "bg-green-100 text-green-700"
-                      : d.availability === "Soon"
-                      ? "bg-yellow-100 text-yellow-700"
-                      : "bg-red-100 text-red-700"
-                  }`}
+                      ${d.is_available
+                        ? "bg-green-100 text-green-700"
+                        : "bg-red-100 text-red-700"
+                      }`}
                   >
-                    {d.availability}
+                    {d.is_available ? "Available" : "Unavailable"}
                   </span>
                 </div>
 
                 {/* Request Button */}
                 <button
                   onClick={() => handleRequest(d)}
-                  disabled={d.availability === "Busy"}
+                  disabled={!d.is_available}
                   className={`ml-4 px-5 py-2 rounded-lg text-sm font-semibold transition
-                ${
-                  d.availability === "Busy"
-                    ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                    : "bg-red-500 text-white hover:bg-red-600"
-                }`}
+                    ${!d.is_available
+                      ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                      : "bg-red-500 text-white hover:bg-red-600"
+                    }`}
                 >
                   Request
                 </button>
