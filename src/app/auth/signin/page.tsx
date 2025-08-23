@@ -16,8 +16,6 @@ export default function SignIn() {
 
 const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
-  // ...existing code...
-
   try {
     const response = await axios.post("http://localhost:8000/auth/login", {
       email,

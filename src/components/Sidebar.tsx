@@ -48,10 +48,11 @@ const sidebarConfig = {
     menuItems: [
       { icon: Home, label: "Overview", href: "/dashboard/donor" },
       { icon: Calendar, label: "Donation History", href: "/dashboard/donor/history" },
-      { icon: Bell, label: "Notifications", href: "/dashboard/donor/notifications" },
+      { icon: Calendar, label: "Appoinments", href: "/dashboard/donor/appoinment" },
+      { icon: Bell, label: "Notifications", href: "/dashboard/donor/notification" },
       { icon: Award, label: "Achievements", href: "/dashboard/donor/achievements" },
-      { icon: MapPin, label: "Nearby Requests", href: "/dashboard/donor/requests" },
-      { icon: Settings, label: "Settings", href: "/dashboard/donor/settings" },
+      { icon: MapPin, label: "Nearby Requests", href: "/dashboard/donor/request" },
+    //   { icon: Settings, label: "Settings", href: "/dashboard/donor/settings" },
     ],
   },
   patient: {
