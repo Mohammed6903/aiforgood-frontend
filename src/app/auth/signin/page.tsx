@@ -17,7 +17,7 @@ export default function SignIn() {
 const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
   try {
-    const response = await axios.post("http://localhost:8000/auth/login", {
+    const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
       email,
       password,
       rememberMe

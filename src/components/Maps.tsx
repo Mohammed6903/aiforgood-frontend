@@ -50,7 +50,7 @@ export default function DonorMap() {
     const fetchDonors = async () => {
       try {
         const res = await axios.post(
-          "http://127.0.0.1:8000/donors/nearby-donors",
+          `${process.env.NEXT_PUBLIC_API_URL}/donors/nearby-donors`,
           {
             lng: patientPos[0],
             lat: patientPos[1],

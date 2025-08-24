@@ -207,7 +207,9 @@ export default function ChatPage() {
 
   const connectWebSocket = (audioMode = false) => {
     const userId = Math.floor(Math.random() * 10000)
-    const ws = new WebSocket(`ws://localhost:8000/ws/${userId}?is_audio=${audioMode}`)
+    const ws = new WebSocket(
+      `${process.env.NEXT_PUBLIC_API_URL?.replace(/^http/, "ws")}/ws/${userId}?is_audio=${audioMode}`
+    )
 
     ws.onopen = () => {
       setIsConnected(true)

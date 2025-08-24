@@ -75,7 +75,7 @@ export default function PatientDashboard() {
       try {
         const token = localStorage.getItem("token");
         if (!token) return;
-        const res = await axios.get("http://localhost:8000/nearby-donors", {
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/donors/nearby-donors`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setDonors(res.data);
@@ -160,7 +160,7 @@ export default function PatientDashboard() {
         const token = localStorage.getItem("token");
         if (!token) return;
 
-        const res = await axios.get("http://localhost:8000/auth/me", {
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
